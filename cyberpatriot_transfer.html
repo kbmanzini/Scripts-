@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberPatriot Script Transfer</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .header {
+            background: #2d2d30;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007acc;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            color: #4ec9b0;
+        }
+        .instructions {
+            background: #252526;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4ec9b0;
+        }
+        .instructions h2 {
+            margin-top: 0;
+            color: #4ec9b0;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .script-container {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .script-header {
+            background: #2d2d30;
+            padding: 10px 15px;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .script-title {
+            color: #4ec9b0;
+            font-weight: bold;
+        }
+        .copy-btn {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .copy-btn:hover {
+            background: #005a9e;
+        }
+        .copy-btn:active {
+            background: #004578;
+        }
+        .copied {
+            background: #4ec9b0 !important;
+        }
+        .script-content {
+            padding: 15px;
+            overflow-x: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .warning {
+            background: #5a1e1e;
+            border-left: 4px solid #f48771;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .warning h3 {
+            margin-top: 0;
+            color: #f48771;
+        }
+        code {
+            background: #2d2d30;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ CyberPatriot Script Transfer Page</h1>
+        <p>Easy script transfer for your Virtual Machine</p>
+    </div>
+
+    <div class="warning">
+        <h3>⚠️ Important Competition Rules</h3>
+        <p><strong>ALWAYS test scripts in practice before competition!</strong> Review each command to understand what it does. Modify paths and commands as needed for your specific image.</p>
+    </div>
+
+    <div class="instructions">
+        <h2>✅ Linux Mint 21 Compatibility</h2>
+        <p><strong>Yes, this script is designed for Linux Mint 21!</strong> It's based on Ubuntu/Debian and uses:</p>
+        <ul>
+            <li>✓ PAM (Pluggable Authentication Modules) - Standard on Mint</li>
+            <li>✓ UFW (Uncomplicated Firewall) - Pre-installed on Mint</li>
+            <li>✓ APT package manager - Native to Mint</li>
+            <li>✓ systemctl for service management - Standard on Mint 21</li>
+            <li>✓ MATE desktop commands from your document - Match Mint MATE edition</li>
+        </ul>
+        <p><strong>The script matches your CyberPatriot document which is specifically written for Linux Mint!</strong></p>
+    </div>
+
+    <div class="instructions">
+        <h2>📋 How to Use This Page</h2>
+        <ol>
+            <li><strong>Save this HTML file</strong> - Right-click this page and "Save As" to your desktop or downloads folder</li>
+            <li><strong>Transfer to VM</strong> - Use shared folders, drag-and-drop, or open this file in your VM's browser</li>
+            <li><strong>Copy the script</strong> - Click the "Copy Script" button below</li>
+            <li><strong>Create the script file in VM:</strong>
+                <ul>
+                    <li>Open Terminal in your VM</li>
+                    <li>Run: <code>nano ~/cyberpatriot_harden.sh</code></li>
+                    <li>Paste the script (Ctrl+Shift+V or right-click paste)</li>
+                    <li>Save with Ctrl+O, then Enter, then Ctrl+X to exit</li>
+                </ul>
+            </li>
+            <li><strong>Make it executable:</strong> <code>chmod +x ~/cyberpatriot_harden.sh</code></li>
+            <li><strong>Run the script:</strong> <code>sudo bash ~/cyberpatriot_harden.sh</code></li>
+        </ol>
+    </div>
+
+    <div class="script-container">
+        <div class="script-header">
+            <span class="script-title">cyberpatriot_harden.sh</span>
+            <button class="copy-btn" onclick="copyScript()">📋 Copy Script</button>
+        </div>
+        <div class="script-content">
+            <pre id="scriptContent">#!/bin/bash
+
+# CyberPatriot Security Hardening Script
+# Run with: sudo bash script.sh
+# IMPORTANT: Review and test each section before running in competition
+
+echo "========================================="
+echo "CyberPatriot Security Hardening Script"
+echo "========================================="
+echo ""
+
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then 
+    echo "Please run as root (use sudo)"
+    exit 1
+fi
+
+# Create backup directory
+BACKUP_DIR="/root/cyberpatriot_backups_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+echo "[+] Backup directory created: $BACKUP_DIR"
+echo ""
+
+# Function to backup files
+backup_file() {
+    if [ -f "$1" ]; then
+        cp "$1" "$BACKUP_DIR/$(basename $1).bak"
+        echo "[BACKUP] $1"
+    fi
+}
+
+echo "========================================="
+echo "1. ROOT PASSWORD SECURITY (4 pts)"
+echo "========================================="
+echo "[*] Checking root password status..."
+getent shadow root
+echo "[*] Locking root password..."
+passwd -l root
+echo "[*] Verifying root password is locked..."
+getent shadow root
+echo "[✓] Root password locked"
+echo ""
+
+echo "========================================="
+echo "2. MINIMUM PASSWORD LENGTH (3 pts)"
+echo "========================================="
+backup_file "/etc/pam.d/common-password"
+echo "[*] Setting minimum password length to 10..."
+sed -i '/pam_unix.so/ s/$/ minlen=10/' /etc/pam.d/common-password
+echo "[✓] Minimum password length configured"
+echo ""
+
+echo "========================================="
+echo "3. PASSWORD HISTORY (3 pts)"
+echo "========================================="
+echo "[*] Configuring password history (remember 3)..."
+sed -i '/pam_unix.so/ s/$/ remember=3/' /etc/pam.d/common-password
+echo "[✓] Password history configured"
+echo ""
+
+echo "========================================="
+echo "4. ACCOUNT LOCKOUT POLICY (4 pts)"
+echo "========================================="
+echo "[*] Creating faillock configuration files..."
+
+# Create faillock config
+cat > /usr/share/pam-configs/faillock << 'EOF'
+Name: Lockout on failed logins
+Default: no
+Priority: 0
+Auth-Type:

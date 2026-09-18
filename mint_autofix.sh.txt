@@ -1,0 +1,114 @@
+### 🧩 Step 1: Create the script
+
+Open a terminal and run:
+
+```bash
+sudo nano /home/$USER/mint_autofix.sh
+
+```
+
+Then paste this entire script in:
+
+```bash
+#!/bin/bash
+echo "===== CYBERPATRIOT MINT 21 AUTO-FIX SCRIPT ====="
+echo "This will automatically fix common scoring items."
+echo
+
+# 1. Enable and secure UFW
+echo "---- CONFIGURING FIREWALL ----"
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw deny ssh
+sudo ufw enable
+echo "Firewall configured: Incoming denied, outgoing allowed, SSH blocked."
+echo
+
+# 2. Disable guest account in LightDM
+echo "---- DISABLING GUEST ACCOUNT ----"
+if [ -f /etc/lightdm/lightdm.conf ]; then
+    sudo sed -i '/allow-guest/d' /etc/lightdm/lightdm.conf
+else
+    sudo touch /etc/lightdm/lightdm.conf
+fi
+echo -e "[SeatDefaults]\nallow-guest=false" | sudo tee /etc/lightdm/lightdm.conf > /dev/null
+echo "Guest account disabled."
+echo
+
+# 3. Remove dangerous software
+echo "---- REMOVING DANGEROUS PACKAGES ----"
+sudo apt remove -y telnet netcat nmap hydra john nikto rsh-client 2>/dev/null
+echo "Potential hacking tools removed."
+echo
+
+# 4. Disable unsafe services
+echo "---- DISABLING UNSAFE SERVICES ----"
+for service in apache2 cups avahi-daemon rpcbind nfs-kernel-server telnetd smbd vsftpd; do
+    if systemctl is-enabled $service &>/dev/null; then
+        sudo systemctl disable $service
+        sudo systemctl stop $service
+        echo "Disabled and stopped: $service"
+    fi
+done
+echo "Unsafe services checked."
+echo
+
+# 5. Enforce password policy
+echo "---- CONFIGURING PASSWORD POLICY ----"
+sudo sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS   90/' /etc/login.defs
+sudo sed -i 's/^PASS_MIN_DAYS.*/PASS_MIN_DAYS   7/' /etc/login.defs
+sudo sed -i 's/^PASS_WARN_AGE.*/PASS_WARN_AGE   7/' /etc/login.defs
+echo "Password aging policy set."
+echo
+
+# 6. Enforce password reuse restriction
+echo "---- ENFORCING PASSWORD REUSE RESTRICTION ----"
+if ! grep -q "pam_pwhistory.so" /etc/pam.d/common-password; then
+    echo "password required pam_pwhistory.so remember=3" | sudo tee -a /etc/pam.d/common-password > /dev/null
+    echo "Added password history rule."
+else
+    echo "Password reuse restriction already in place."
+fi
+echo
+
+# 7. Disable root SSH login
+echo "---- HARDENING SSH CONFIG ----"
+sudo sed -i '/^PermitRootLogin/d' /etc/ssh/sshd_config
+echo "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config > /dev/null
+sudo systemctl restart ssh
+echo "Root SSH login disabled."
+echo
+
+echo "===== AUTO-FIX COMPLETE ====="
+echo "✅ Recommended: Run 'sudo /home/$USER/mint_audit.sh' afterward to verify fixes."
+
+```
+
+---
+
+### 🧩 Step 2: Make it executable
+
+```bash
+sudo chmod +x /home/$USER/mint_autofix.sh
+
+```
+
+---
+
+### 🧩 Step 3: Run it
+
+```bash
+sudo /home/$USER/mint_autofix.sh
+
+```
+
+---
+
+### 🧩 Step 4 (Optional): Verify fixes
+
+Run:
+
+```bash
+sudo /home/$USER/mint_audit.sh
+
+```
